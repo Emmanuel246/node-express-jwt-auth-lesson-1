@@ -6,7 +6,7 @@ const handleErrors = (err) => {
 
 
     // validation error messages
-    if (err.message.includes('user validation failed')){
+    if (err.message.includes('User validation failed')){
         console.log(err);
     }
 
