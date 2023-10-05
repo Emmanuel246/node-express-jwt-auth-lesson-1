@@ -2,14 +2,22 @@ const User = require('../models/user');
 
 const handleErrors = (err) => {
     console.log(err.message, err.code);
-    let error = {email: '', password: ''}; 
+    let errors = {email: '', password: ''}; 
 
 
-    // validation error messages
+    // duplicating error handler
+    if (err.code === 11000) {
+        errors.email = "This Email is already registered";
+        return errors;
+    } 
+
+    // validation error code messages
     if (err.message.includes('User validation failed')){
-        console.log(err);
+      Object.values(err.errors).forEach(({properties}) => {
+        errors[properties.path] = properties.message
+      });
     }
-
+    return errors;
 }
 
 module.exports.signup_get = (req, res) => {
@@ -29,8 +37,8 @@ try {
 } 
 
 catch (err) {
-    const error = handleErrors(err);
-    res.status(400).send('Error, User not created');
+    const errors = handleErrors(err);
+    res.status(400).json({errors});
 }
 
 
